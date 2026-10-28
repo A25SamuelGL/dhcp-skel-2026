@@ -1,4 +1,10 @@
 services:
+  dnsserver:
+    build: docker/dnsserver
+    hostname: dnsserver
+    networks: 
+      rededns:
+        ipv4_address: 192.168.130.9    
   kea:
     build: ./docker/kea
     container_name: kea

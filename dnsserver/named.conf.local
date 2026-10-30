@@ -10,4 +10,4 @@ zone "test.lan" {
 zone "130.168.192.in-addr.arpa" {
     type primary;
     file "zonas/db.130";
-}
+};

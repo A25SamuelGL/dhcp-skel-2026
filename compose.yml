@@ -18,7 +18,10 @@ services:
     hostname: dnsserver
     networks: 
       dhcp_lab:
-        ipv4_address: 192.168.130.3    
+        ipv4_address: 192.168.130.9  
+    volumes:
+      - ./dnsserver/named.conf.local:/etc/bind/named.conf.local
+      - ./dnsserver/zonas:/var/cache/bind/zonas          
   kea:
     build: ./docker/kea
     container_name: kea

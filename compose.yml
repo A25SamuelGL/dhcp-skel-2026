@@ -94,6 +94,20 @@ services:
     depends_on:
       - ned
 
+  cliente5:
+  build: ./docker/cliente
+  container_name: client5
+  networks:
+    rede_lannister:
+      ipv4_address: 192.168.11.219
+
+  command: >
+    sh -c "ip addr flush dev eth0 && dhclient -v eth0 && sleep infinity"
+  cap_add:
+    - NET_ADMIN
+  depends_on:
+    - ned
+
 networks:
   rede_stark:
     driver: bridge

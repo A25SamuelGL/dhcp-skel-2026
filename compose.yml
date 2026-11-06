@@ -5,8 +5,8 @@ services:
     hostname: router
     networks:
       rede_wan:
-        ipv4_address: 192.168.200.254  
-        interface_name: eth0  
+        ipv4_address: 192.168.200.254
+        interface_name: eth0
       rede_stark:
         ipv4_address: 192.168.10.254
         interface_name: eth1
@@ -17,16 +17,20 @@ services:
         ipv4_address: 192.168.12.254
         interface_name: eth3
     cap_add:
-      - NET_ADMIN    
+      - NET_ADMIN
   arya:
     build: docker/dnsserver
     hostname: arya
-    networks: 
+    cap_add:
+      - NET_ADMIN
+    environment:
+      - GATEWAY=192.168.10.254
+    networks:
       rede_stark:
-        ipv4_address: 192.168.10.9  
+        ipv4_address: 192.168.10.9
     volumes:
       - ./arya/named.conf.local:/etc/bind/named.conf.local
-      - ./arya/zonas:/var/cache/bind/zonas          
+      - ./arya/zonas:/var/cache/bind/zonas
   ned:
     build: ./docker/kea
     container_name: ned
@@ -35,17 +39,16 @@ services:
         ipv4_address: 192.168.10.2
     volumes:
       - ./ned/kea-dhcp4.conf.json:/etc/kea/kea-dhcp4.conf
-  
+      - ./ned/kea-dhcp-ddns.conf.json:/etc/kea/kea-dhcp-ddns.conf
+      - ./logs:/var/log/kea
 
-  
   cliente1:
     build: ./docker/cliente
     container_name: client1
     networks:
       rede_stark:
         ipv4_address: 192.168.10.221
-        mac_address: 02:42:ac:11:00:10  # dirección HW fija
-
+        mac_address: 02:42:ac:11:00:10 # dirección HW fija
     command: >
       sh -c "ip addr flush dev eth0 && dhclient -v eth0 && sleep infinity"
     cap_add:
@@ -58,35 +61,32 @@ services:
     networks:
       rede_stark:
         ipv4_address: 192.168.10.222
-
     command: >
       sh -c "ip addr flush dev eth0 && dhclient -v eth0 && sleep infinity"
     cap_add:
       - NET_ADMIN
     depends_on:
       - ned
-  
+
   cliente3:
     build: ./docker/cliente
     container_name: client3
     networks:
       rede_stark:
         ipv4_address: 192.168.10.220
-
     command: >
       sh -c "ip addr flush dev eth0 && dhclient -v eth0 && sleep infinity"
     cap_add:
       - NET_ADMIN
     depends_on:
       - ned
-  
+
   cliente4:
     build: ./docker/cliente
     container_name: client4
     networks:
       rede_stark:
         ipv4_address: 192.168.10.219
-
     command: >
       sh -c "ip addr flush dev eth0 && dhclient -v eth0 && sleep infinity"
     cap_add:
@@ -95,18 +95,30 @@ services:
       - ned
 
   cliente5:
-  build: ./docker/cliente
-  container_name: client5
-  networks:
-    rede_lannister:
-      ipv4_address: 192.168.11.219
+    build: ./docker/cliente
+    container_name: client5
+    networks:
+      rede_lannister:
+        ipv4_address: 192.168.11.219
+    command: >
+      sh -c "ip addr flush dev eth0 && dhclient -v eth0 && sleep infinity"
+    cap_add:
+      - NET_ADMIN
+    depends_on:
+      - ned
 
-  command: >
-    sh -c "ip addr flush dev eth0 && dhclient -v eth0 && sleep infinity"
-  cap_add:
-    - NET_ADMIN
-  depends_on:
-    - ned
+  cliente6:
+    build: ./docker/cliente
+    container_name: client6
+    networks:
+      rede_targaryen:
+        ipv4_address: 192.168.12.235
+    command: >
+      sh -c "ip addr flush dev eth0 && dhclient -v eth0 && sleep infinity"
+    cap_add:
+      - NET_ADMIN
+    depends_on:
+      - ned
 
 networks:
   rede_stark:
@@ -129,4 +141,4 @@ networks:
     driver: bridge
     ipam:
       config:
-        - subnet: 192.168.200.0/24             
+        - subnet: 192.168.200.0/24

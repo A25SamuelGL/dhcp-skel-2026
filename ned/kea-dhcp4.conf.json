@@ -67,7 +67,7 @@
       {
         "id": 2,
         "subnet": "192.168.11.0/24",
-        "pools": [ { "pool": "192.168.11.50 - 192.168.11.900" } ],
+        "pools": [ { "pool": "192.168.11.50 - 192.168.11.200" } ],
         "option-data": [
           {
             "name":"domain-search",
@@ -78,7 +78,38 @@
             "data":"192.168.11.254"
           }
         ]
+      },
+      {
+        "id": 3,
+        "subnet": "192.168.12.0/24",
+        "pools": [ { "pool": "192.168.12.50 - 192.168.12.200" } ],
+        "option-data": [
+          {
+            "name":"domain-search",
+            "data":"targaryen.lan"
+          },
+          {
+            "name":"routers",
+            "data":"192.168.12.254"
+          }
+        ]
       }
-    ]
+    ],
+  "loggers": [
+      {
+        "name": "kea-dhcp4.leases",
+        "output_options": [
+          {
+            "output": "/var/log/kea/kea-dhcp4.log",
+            "maxver": 8,
+            "maxsize": 204800,
+            "flush": true,
+            "pattern": "%d{%j %H:%M:%S.%q} %c %m\n"
+          }
+        ],
+        "severity": "INFO",
+        "debuglevel": 0
+        }
+        ]
   }
 }
